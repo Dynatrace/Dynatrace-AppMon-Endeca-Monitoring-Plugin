@@ -13,7 +13,7 @@ This monitor collects health and performance information from the Endeca dgraph 
 | Supported dynaTrace Versions | >= 5.5
 | Author | Kevin Jackson (kevin.jackson@compuware.com)
 | License | [dynaTrace BSD](dynaTraceBSD.txt)
-| Support | [Not Supported ](https://community/display/DL/Support+Levels#SupportLevels-Community)
+| Support | [Not Supported ](https://community.compuwareapm.com/community/display/DL/Support+Levels#SupportLevels-Community)
 | Release History | 2013-06-12 Initial Release
 | Download | [EndecaMonitor_1.0.0.jar](com.dynatrace.diagnostics.plugin.EndecaMonitor_1.0.0.jar)  
 || [Endeca.dashboard.xml](Endeca.dashboard.xml)
