@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+  <extension point="com.dynatrace.diagnostics.pdk.pluginconfig" id="com.dynatrace.diagnostics.plugin.EndecaMonitor" name="Endeca Monitor">
+    <information>
+      <description value="The Endeca monitor will capture information about the health and performance of the Endeca server." />
+      <license value="compuwareBSD.txt" />
+      <supportlevel value="unsupported" />
+      <category value="Remote" />
+      <displayname value="Endeca Monitor" />
+    </information>
+    <configuration>
+      <property key="url" label="URL" type="url" description="This property is deprecated and thus hidden. Old description: The full URL to connect to in the format protocol://host:port/path Protocol has to be http or https, the port can be omitted for the respective default port." default="http://localhost/">
+        <visibility>
+          <rule key="alwaysHidden" value="true" />
+        </visibility>
+      </property>
+      <property key="protocol" label="Protocol" type="list" description="Select the protocol that will be used to establish the connection. If 'https' is selected, a secure connection will be made using SSL." default="http">
+        <list>
+          <item value="http" />
+          <item value="https" />
+        </list>
+      </property>
+      <property key="httpPort" label="Port" type="long" description="Enter the port number of the webserver. The default HTTP port is 80." default="80">
+        <visibility>
+          <rule key="protocol" value="http" />
+        </visibility>
+      </property>
+      <property key="path" label="Path" type="string" description="Enter the path to the webpage to be monitored. Example: /index.html" default="/admin?op=stats" multiline="false" />
+      <property key="httpVersion" label="HTTP version" type="list" description="The version of the HTTP protocol. HTTP/1.1 is the recommended." default="1.1">
+        <list>
+          <item value="1.1" />
+          <item value="1.0" />
+        </list>
+      </property>
+    </configuration>
+  </extension>
+  <extension id="com.dynatrace.diagnostics.plugin.EndecaMonitor.monitor" name="Endeca Monitor" point="com.dynatrace.diagnostics.pdk.monitor">
+    <plugin class="com.dynatrace.diagnostics.plugin.endecamonitor.EndecaMonitor" configid="com.dynatrace.diagnostics.plugin.EndecaMonitor" />
+    <information>
+      <displayname value="Endeca Monitor" />
+    </information>
+  </extension>
+  <extension point="com.dynatrace.diagnostics.pdk.monitormetricgroup" id="com.dynatrace.diagnostics.plugin.EndecaMonitor.metricgroup1" name="Endeca Monitor">
+    <metricgroup displayname="Endeca Monitor" monitorid="com.dynatrace.diagnostics.plugin.EndecaMonitor.monitor">
+      <metric defaultrate="none" description="If the host is reachable, the measure will yield 1, otherwise 0." displayname="HostReachable" hidedisplayaggregation="sum count" name="HostReachable" unit="number" />
+      <metric defaultrate="none" description="The amount of time that has elapsed since the Endeca Index has been last updated" displayname="TimeSinceLastIndexUpdate" hidedisplayaggregation="sum count" name="TimeSinceLastIndexUpdate" unit="s" />
+      <metric defaultrate="purepath" name="NumOfRequests" unit="number" description="Number of requests to Endeca during the monitered interval" />
+      <metric defaultrate="purepath" name="CpuUsage" unit="s" description="My metric description ..." />
+      <metric defaultrate="purepath" name="RequestTimeAvg" unit="ms" description="My metric description ..." />
+      <metric defaultrate="purepath" name="RequestTimeMax" unit="ms" description="My metric description ..." />
+      <metric defaultrate="purepath" name="QueryPerformanceAvg" unit="ms" description="My metric description ..." />
+      <metric defaultrate="purepath" name="QueryPerformanceMax" unit="ms" description="My metric description ..." />
+    </metricgroup>
+    <information>
+      <description value="Provides the ability to pull in performance measures for the Endeca Index server(s)" />
+    </information>
+  </extension>
+  <extension id="com.dynatrace.diagnostics.plugins.UrlPlugin.migrator" point="com.dynatrace.diagnostics.pdk.migrator">
+    <migration classname="endeca.EndecaMonitor" configid="com.dynatrace.diagnostics.plugins.EndecaPlugin" maxSourceVersion="5.0.0.3772" minSourceVersion="1.0.0.0" />
+  </extension>
+</plugin>
+

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Implementation-Version: 5.0.0.3772
+Bundle-ClassPath: .,lib/commons-logging-1.1.1.jar
+Built-By: builduser
+Bundle-Name: Endeca Monitor
+Bundle-Localization: plugin
+Created-By: 20.6-b01 (Sun Microsystems Inc.)
+Require-Bundle: com.dynatrace.diagnostics.sdk
+Ant-Version: Apache Ant 1.7.1
+Bundle-Vendor: Compuware Corporation
+Bundle-Version: 1.0.1
+Dynatrace-Plugin-Types: metric, monitor
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: com.dynatrace.diagnostics.plugin.EndecaMonitor;si
+ ngleton:=true
+
