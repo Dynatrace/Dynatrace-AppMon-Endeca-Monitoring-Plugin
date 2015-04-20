@@ -15,6 +15,7 @@ import java.util.Date;
 //import java.util.regex.Matcher;
 //import java.util.regex.Pattern;
 
+
 import com.dynatrace.diagnostics.pdk.Migrator;
 import com.dynatrace.diagnostics.pdk.Monitor;
 import com.dynatrace.diagnostics.pdk.MonitorEnvironment;
@@ -29,7 +30,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import org.w3c.dom.NodeList;
 
 /**
@@ -101,9 +101,18 @@ public class EndecaMonitor implements Monitor, Migrator {
 	@Override
 	public Status setup(MonitorEnvironment env) throws Exception {
 		Status status = new Status(Status.StatusCode.Success);
+		//check plugin environment configuration parameter values
+		if (env == null || env.getHost() == null) {
+			status.setStatusCode(Status.StatusCode.ErrorInternalConfigurationProblem);
+			status.setShortMessage("Environment was not properly initialized. env.host must not be null.");
+			status.setMessage("Environment was not properly initialized. env.host must not be null.");
+			Exception e = new IllegalArgumentException("Environment was not properly initialized. env.host must not be null.");
+			status.setException(e);
+			log.log(Level.SEVERE, status.getMessage(), e);
+			return status;
+		}
 		
 		config = readConfig(env);
-				
 		
 
 		if (config.url == null || (!config.url.getProtocol().equals("http") && !config.url.getProtocol().equals("https"))) {
@@ -125,9 +134,13 @@ public class EndecaMonitor implements Monitor, Migrator {
 	public Status execute(MonitorEnvironment env) throws Exception {
 		Status status = new Status();				
 				
-		log.fine("fine");
 		log.info("info");
 		log.warning("warning");
+		
+		if (log.isLoggable(Level.FINE)){
+			log.fine("fine");
+			log.fine("Plugin Starting Up Now...");
+		}
 
 		//in case plug-in returns PartialSuccess the hostReachable measure will always return 0
 		Collection<MonitorMeasure> hostReachableMeasures = env.getMonitorMeasures(METRIC_GROUP, MSR_HOST_REACHABLE);
@@ -142,9 +155,7 @@ public class EndecaMonitor implements Monitor, Migrator {
 				measure.setValue(1);
 										
 		}
-			
-				
-
+		
 		StringBuilder messageBuffer = new StringBuilder("URL: ");
 		messageBuffer.append(config.url).append("\r\n");
 		
@@ -180,12 +191,13 @@ public class EndecaMonitor implements Monitor, Migrator {
 			status.setStatusCode(Status.StatusCode.PartialSuccess);
 			status.setShortMessage(ce == null ? "" : ce.getClass().getSimpleName());
 			messageBuffer.append(ce == null ? "" : ce.getMessage());
+			log.log(Level.SEVERE, status.getMessage(), ce);
 		} catch (IOException ioe) {
 			status.setException(ioe);
-			status.setStatusCode(Status.StatusCode.PartialSuccess);
+			status.setStatusCode(Status.StatusCode.ErrorTargetServiceExecutionFailed);
 			status.setShortMessage(ioe == null ? "" : ioe.getClass().getSimpleName());
 			messageBuffer.append(ioe == null ? "" : ioe.getMessage());
-			if (log.isLoggable(Level.SEVERE))
+			//if (log.isLoggable(Level.SEVERE))
 				log.severe("Requesting URL " + config.url.toString() /**httpRequest.getURI()**/ + " caused exception: " + ioe);
 		} 	
 		// calculate and set the measurements
@@ -193,7 +205,9 @@ public class EndecaMonitor implements Monitor, Migrator {
 		if (status.getStatusCode().getCode() == Status.StatusCode.Success.getCode()) {
 			if ((measures = env.getMonitorMeasures(METRIC_GROUP, MSR_NUM_OF_REQUESTS)) != null) {				 
 				for (MonitorMeasure measure : measures) {
-					//log.severe("Number of requests=" + numRequests);
+					if (log.isLoggable(Level.FINE)){
+						log.fine("Number of requests=" + numRequests);
+					}
 					measure.setValue(this.numRequests);
 					
 				}
@@ -246,6 +260,9 @@ public class EndecaMonitor implements Monitor, Migrator {
 		}
 
 		status.setMessage(messageBuffer.toString());
+		if (log.isLoggable(Level.FINE)){
+			log.fine("Plugin Status: " + messageBuffer.toString());
+		}
 		return status;
 	}
 
@@ -302,10 +319,12 @@ public class EndecaMonitor implements Monitor, Migrator {
 		Element docEl = doc.getDocumentElement();		
 		//get a nodelist of <EndecaMeasures> elements		
 		NodeList nodes = docEl.getElementsByTagName(elementTag);
-		log.fine ("The element tag is set to: " + elementTag);
-		//log.severe ("The element tag is set to: " + elementTag);
-		log.fine("The XML attribute is equal to: " + attribute + ":" + attribute2);
-		//log.severe("The XML attribute is equal to: " + attribute + ":" + attribute2);
+		if (log.isLoggable(Level.FINE)){
+			log.fine ("The element tag is set to: " + elementTag);
+			//log.severe ("The element tag is set to: " + elementTag);
+			log.fine("The XML attribute is equal to: " + attribute + ":" + attribute2);
+			//log.severe("The XML attribute is equal to: " + attribute + ":" + attribute2);
+		}
 							
 		try {		
 			if (nodes != null && nodes.getLength() > 0) {
@@ -317,8 +336,10 @@ public class EndecaMonitor implements Monitor, Migrator {
 					//get the EndecaMeasure element
 					Element el = (Element)nodes.item(0);
 					xmlAttribute = el.getAttribute(attribute);
-					log.fine ("The xml attribute measure value is equal to: " + xmlAttribute);
-					//log.severe ("The xml attribute measure value is equal to: " + xmlAttribute);
+					if (log.isLoggable(Level.FINE)){
+						log.fine ("The xml attribute measure value is equal to: " + xmlAttribute);
+						//log.severe ("The xml attribute measure value is equal to: " + xmlAttribute);
+					}
 				}
 				else if (nodes.getLength() > 1) {										
 					for(int i = 0 ; i < nodes.getLength();i++) {	
@@ -339,7 +360,9 @@ public class EndecaMonitor implements Monitor, Migrator {
 			            	
 			            		xmlAttribute = value2;
 			            		//log.severe ("Attribute Values Match: '" + attribute2 + " = '" + value + "'");
-			            		log.fine ("The xml attribute measure value is equal to: " + xmlAttribute);
+			            		if (log.isLoggable(Level.FINE)){
+			            			log.fine ("The xml attribute measure value is equal to: " + xmlAttribute);
+			            		}
 			            		//log.severe ("The xml attribute measure value is equal to: " + xmlAttribute);
 			            	}
 			            	else {
@@ -386,7 +409,9 @@ public class EndecaMonitor implements Monitor, Migrator {
     		seconds = ((currTime.getTime() - date.getTime()) / 1000);    		
     		//log.severe ("Time Update Diff: " + seconds);
     		this.timeSinceLastUpdate = seconds;
-    		log.fine ("The time elapsed since the Index was last updated is: " + timeSinceLastUpdate);
+    		if (log.isLoggable(Level.FINE)){
+    			log.fine ("The time elapsed since the Index was last updated is: " + timeSinceLastUpdate);
+    		}
     	
     	} catch(Exception ex) {
     		log.severe (ex.getMessage());    	
