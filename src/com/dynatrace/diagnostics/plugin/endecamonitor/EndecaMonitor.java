@@ -456,6 +456,8 @@ public class EndecaMonitor implements Monitor, Migrator {
 		}
 	}
 	
+	URL url = new URL()
+	
 	private static class Config {
 	    URL url;
 		String method;
