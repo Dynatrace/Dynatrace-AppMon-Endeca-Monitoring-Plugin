@@ -10,8 +10,7 @@ Dynatrace-Plugin-Types: metric, monitor
 Ant-Version: Apache Ant 1.7.1
 Bundle-Name: Endeca Monitor
 Bundle-Version: 1.0.3
-Bundle-ClassPath: .,lib/com.dynatrace.diagnostics.sdk.jar,lib/commons-
- logging-1.1.1.jar
+Bundle-ClassPath: .,lib/commons-logging-1.1.1.jar
 Bundle-Localization: plugin
 Created-By: 20.6-b01 (Sun Microsystems Inc.)
 
