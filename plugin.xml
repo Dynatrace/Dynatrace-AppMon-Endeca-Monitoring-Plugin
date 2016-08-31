@@ -60,4 +60,3 @@
     <migration classname="endeca.EndecaMonitor" configid="com.dynatrace.diagnostics.plugins.EndecaPlugin" maxSourceVersion="5.0.0.3772" minSourceVersion="1.0.0.0" />
   </extension>
 </plugin>
-

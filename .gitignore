@@ -42,4 +42,11 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+.classpath
+.project
+build.properties
+lib/com.dynatrace.diagnostics.sdk.jar
 README_old.md
+/bin/
+/build/
+

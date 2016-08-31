@@ -356,7 +356,7 @@ public class EndecaMonitor implements Monitor, Migrator {
 			            //looks for String match on the value of the attribute and specific measure this monitor is configured to capture (i.e. "HTTP Total Request Time")
 			            if (value.equals(attribute2) && value != null) {
 			            	//makes sure the string values are not null or nan
-			            	if (value2 != null && value2 != "nan") {	            	
+			            	if (value2 != null && !value2.equals("nan")) {	            	
 			            	
 			            		xmlAttribute = value2;
 			            		//log.severe ("Attribute Values Match: '" + attribute2 + " = '" + value + "'");
