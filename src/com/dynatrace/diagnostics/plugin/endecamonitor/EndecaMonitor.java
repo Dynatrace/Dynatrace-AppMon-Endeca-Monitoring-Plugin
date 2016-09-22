@@ -108,7 +108,7 @@ public class EndecaMonitor implements Monitor, Migrator {
 			status.setMessage("Environment was not properly initialized. env.host must not be null.");
 			Exception e = new IllegalArgumentException("Environment was not properly initialized. env.host must not be null.");
 			status.setException(e);
-			log.log(Level.SEVERE, status.getMessage(), e);
+			log.severe(status.getMessage() + e);
 			return status;
 		}
 		
@@ -191,7 +191,7 @@ public class EndecaMonitor implements Monitor, Migrator {
 			status.setStatusCode(Status.StatusCode.PartialSuccess);
 			status.setShortMessage(ce == null ? "" : ce.getClass().getSimpleName());
 			messageBuffer.append(ce == null ? "" : ce.getMessage());
-			log.log(Level.SEVERE, status.getMessage(), ce);
+			log.severe(status.getMessage() + ce);
 		} catch (IOException ioe) {
 			status.setException(ioe);
 			status.setStatusCode(Status.StatusCode.ErrorTargetServiceExecutionFailed);
